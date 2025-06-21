@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    mini_portile2 (2.8.9)
+    sqlite3 (2.7.0)
+      mini_portile2 (~> 2.8.0)
+    sqlite3 (2.7.0-arm64-darwin)
+
+PLATFORMS
+  arm64-darwin-24
+  ruby
+
+DEPENDENCIES
+  sqlite3 (~> 2.7)
+
+BUNDLED WITH
+   2.6.9
