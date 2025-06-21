@@ -1,0 +1,6 @@
+require_relative 'activerecord_lite/base'
+require_relative 'activerecord_lite/relation'
+require_relative 'activerecord_lite/delegation'
+require_relative 'activerecord_lite/class_specific_relation'
+require_relative 'activerecord_lite/current_scope'
+require_relative  'activerecord_lite/database_connection'
