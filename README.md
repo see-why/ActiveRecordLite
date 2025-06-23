@@ -15,17 +15,20 @@ ActiveRecordLite is a project that demonstrates the core concepts behind ActiveR
 ## Features
 
 ### 🔍 Query Building
+
 - **Where clauses**: Filter records based on conditions
 - **Order clauses**: Sort results by specified columns
 - **Lazy evaluation**: Queries are only executed when needed
 
 ### 🏗️ Architecture
+
 - **Base class**: Provides the main interface for models
 - **Relation objects**: Handle query building and SQL generation
 - **Delegation system**: Automatically delegates methods to relation objects
 - **Current scope management**: Maintains query state across method calls
 
 ### 🗄️ Database Integration
+
 - **SQLite in-memory database**: Fast, lightweight database for development
 - **SQL generation**: Automatically converts query objects to SQL
 - **Result handling**: Returns results as hash objects
@@ -33,12 +36,14 @@ ActiveRecordLite is a project that demonstrates the core concepts behind ActiveR
 ## Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <repository-url>
 cd ActiveRecordLite
 ```
 
 2. Install dependencies:
+
 ```bash
 bundle install
 ```
@@ -93,36 +98,48 @@ User.where(active: true).count
 ### Core Components
 
 #### `ActiveRecordLite::Base`
+
 The main base class that provides the ORM interface. It includes:
+
 - Class-level query methods (`where`, `order`, `count`, `to_a`)
 - Table name generation
 - Current scope management
 - Relation delegation setup
 
 #### `Relation`
+
 Handles query building and SQL generation:
+
 - Stores `where_values` and `order_values`
 - Generates SQL clauses from stored conditions
 - Supports method chaining with `tap`
 
 #### `DatabaseConnection`
+
 Singleton class managing database operations:
+
 - Uses SQLite in-memory database
 - Executes SQL queries
 - Returns results as hash objects
 
 #### `Delegation`
+
 Manages method delegation to relation objects:
+
 - Defines which classes can be delegated to
 - Currently supports `Relation` class delegation
 
 #### `CurrentScope`
+
 Simple struct for maintaining query state:
+
 - Stores the current scope object
 - Allows for query state persistence across method calls
 
 #### `ClassSpecificRelation`
+
 Provides dynamic method delegation:
+
 - Uses `method_missing` to delegate unknown methods to the model
 - Automatically defines methods for future calls
 - Supports `respond_to_missing?` for proper method checking
@@ -153,7 +170,7 @@ ActiveRecordLite/
 │       ├── current_scope.rb          # Query state management
 │       └── class_specific_relation.rb # Dynamic method delegation
 ├── bin/
-│   └── activerecord_lite.rb          # Executable (currently empty)
+│   └── activerecord_lite.rb          # Executable
 ├── Gemfile                           # Dependencies
 └── README.md                         # This file
 ```
@@ -198,4 +215,4 @@ This project demonstrates several important Ruby and ORM concepts:
 - **SQL generation**: Converting Ruby objects to SQL queries
 - **Scope management**: Maintaining state across method calls
 
-For more information about ActiveRecord patterns, see the [Rails ActiveRecord documentation](https://guides.rubyonrails.org/active_record_basics.html). 
+For more information about ActiveRecord patterns, see the [Rails ActiveRecord documentation](https://guides.rubyonrails.org/active_record_basics.html).
