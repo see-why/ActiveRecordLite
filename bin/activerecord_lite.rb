@@ -36,5 +36,5 @@ class User < ActiveRecordLite::Base
 end
 
 # Query Example
-puts User.where(organisation: "CIBC").active.recent.count
-puts User.active.where(organisation: "CIBC").recent.to_a
+puts User.where(organization: "CIBC").active.recent.count
+puts User.active.where(organization: "CIBC").recent.to_a
