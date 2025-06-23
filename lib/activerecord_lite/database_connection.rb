@@ -3,10 +3,10 @@ require 'singleton'
 
 module ActiveRecordLite
   class DatabaseConnection
-    include singleton
+    include Singleton
 
     def initialize
-      @db = SQlITE3::Database.new ":memory:"
+      @db = SQLite3::Database.new ":memory:"
       @db.results_as_hash = true
     end
 
