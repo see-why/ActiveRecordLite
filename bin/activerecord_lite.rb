@@ -31,7 +31,7 @@ class User < ActiveRecordLite::Base
   end
 
   def self.recent
-    order(created_at: asc)
+    order(created_at: :asc)
   end
 end
 
