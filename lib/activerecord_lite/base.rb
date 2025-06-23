@@ -2,23 +2,23 @@
 module ActiveRecordLite
   class Base
     def self.inherited(subclass)
-      subclass.initialize_relation_delegate_cache
+      subclass.iniherited_relation_delegate_cache
     end
 
     def self.iniherited_relation_delegate_cache
-      @relation_delegaate_cache = {}
+      @relation_delegate_cache = {}
       Delegation::DELEGATED_CLASSES.each do |klass|
         delegate =
           Class.new(klass) do
             include ClassSpecificRelation
           end
 
-        mangled_name = Klass.name.gsub("::", "_")
+        mangled_name = klass.name.gsub("::", "_")
         const_set mangled_name, delegate
 
         private_constant mangled_name
 
-        @relation_delegate_cache[Klass] = delegate
+        @relation_delegate_cache[klass] = delegate
 
         current_scope.scope = relation_delegate_cache[Relation].new(self)
       end
