@@ -30,7 +30,7 @@ class User < ActiveRecordLite::Base
     where(active: 1)
   end
 
-  def order
+  def self.recent
     order(created_at: asc)
   end
 end
