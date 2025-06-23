@@ -31,7 +31,7 @@ module ActiveRecordLite
     def self.order(ordering) = current_scope.scope.order(ordering)
 
     def self.count
-      sql = current_scope.to_sql
+      sql = current_scope.scope.to_sql
       query = "SELECT COUNT(*) FROM #{table_name} #{sql}"
 
       puts "Executing SQL: #{query}"
