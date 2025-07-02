@@ -1,5 +1,5 @@
 module ActiveRecordLite
  module Delegation
-   DELEGATED_CLASSES = [Relation].freeze
+   DELEGATED_CLASSES = [ActiveRecordLite::Relation].freeze
  end
 end
