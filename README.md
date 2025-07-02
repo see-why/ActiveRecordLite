@@ -2,6 +2,61 @@
 
 A lightweight implementation of ActiveRecord patterns in Ruby, providing a simplified ORM (Object-Relational Mapping) framework with query building capabilities.
 
+---
+
+## Quick Start
+
+Here's a minimal example to get you up and running:
+
+```ruby
+require 'activerecord_lite'
+
+# Setup in-memory database and create a table
+ActiveRecordLite::DatabaseConnection.instance.execute(<<-SQL)
+  CREATE TABLE users (
+    id INTEGER PRIMARY KEY,
+    name TEXT,
+    organization TEXT,
+    active BOOLEAN,
+    created_at DATETIME
+  );
+SQL
+
+ActiveRecordLite::DatabaseConnection.instance.execute(
+  "INSERT INTO users (name, organization, active, created_at) VALUES (?, ?, ?, ?)", ["Alice", "OrgA", 1, "2024-06-01"]
+)
+
+class User < ActiveRecordLite::Base
+  def self.active
+    where(active: 1)
+  end
+end
+
+puts User.active.where(organization: "OrgA").to_a
+```
+
+---
+
+## Running Tests
+
+This project uses RSpec for testing. To run all specs (including integration):
+
+```bash
+bundle exec rspec
+```
+
+To run a specific spec file:
+
+```bash
+bundle exec rspec spec/integration_spec.rb
+```
+
+### Test Coverage
+- **Unit specs**: All major classes/modules are covered (Base, Relation, DatabaseConnection, Delegation, ClassSpecificRelation, CurrentScope).
+- **Integration specs**: End-to-end usage with real models, table creation, and query chaining.
+
+---
+
 ## Overview
 
 ActiveRecordLite is a project that demonstrates the core concepts behind ActiveRecord, the popular ORM used in Ruby on Rails. It implements a minimal but functional ORM that supports:
@@ -93,126 +148,33 @@ User.where(active: true).order(name: 'ASC').to_a
 User.where(active: true).count
 ```
 
-## Architecture
+### Integration Example
 
-### Core Components
+A real-world scenario using all the main features:
 
-#### `ActiveRecordLite::Base`
+```ruby
+require 'activerecord_lite'
 
-The main base class that provides the ORM interface. It includes:
+db = ActiveRecordLite::DatabaseConnection.instance
 
-- Class-level query methods (`where`, `order`, `count`, `to_a`)
-- Table name generation
-- Current scope management
-- Relation delegation setup
+db.execute('CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, organization TEXT, active BOOLEAN, created_at DATETIME);')
+db.execute("INSERT INTO users (name, organization, active, created_at) VALUES (?, ?, ?, ?)", ["Alice", "OrgA", 1, "2024-06-01"])
+db.execute("INSERT INTO users (name, organization, active, created_at) VALUES (?, ?, ?, ?)", ["Bob", "OrgB", 0, "2024-06-02"])
+db.execute("INSERT INTO users (name, organization, active, created_at) VALUES (?, ?, ?, ?)", ["Carol", "OrgA", 1, "2024-06-03"])
 
-#### `Relation`
+class User < ActiveRecordLite::Base
+  def self.active
+    where(active: 1)
+  end
+  def self.recent
+    order(created_at: :desc)
+  end
+end
 
-Handles query building and SQL generation:
+# Count active users in OrgA
+puts User.where(organization: "OrgA").active.count # => 2
 
-- Stores `where_values` and `order_values`
-- Generates SQL clauses from stored conditions
-- Supports method chaining with `tap`
-
-#### `DatabaseConnection`
-
-Singleton class managing database operations:
-
-- Uses SQLite in-memory database
-- Executes SQL queries
-- Returns results as hash objects
-
-#### `Delegation`
-
-Manages method delegation to relation objects:
-
-- Defines which classes can be delegated to
-- Currently supports `Relation` class delegation
-
-#### `CurrentScope`
-
-Simple struct for maintaining query state:
-
-- Stores the current scope object
-- Allows for query state persistence across method calls
-
-#### `ClassSpecificRelation`
-
-Provides dynamic method delegation:
-
-- Uses `method_missing` to delegate unknown methods to the model
-- Automatically defines methods for future calls
-- Supports `respond_to_missing?` for proper method checking
-
-### Query Flow
-
-1. **Method Call**: User calls `User.where(active: true)`
-2. **Delegation**: Method is delegated to a `Relation` object
-3. **Query Building**: `Relation` stores the condition in `where_values`
-4. **Lazy Evaluation**: Query is not executed until `to_a` or `count` is called
-5. **SQL Generation**: `Relation.to_sql` converts stored conditions to SQL
-6. **Execution**: `DatabaseConnection` executes the generated SQL
-7. **Result**: Returns array of hash objects or count value
-
-## Development
-
-### Project Structure
-
+# Get recent active users in OrgA
+puts User.where(organization: "OrgA").active.recent.to_a
+# => [{"id"=>3, "name"=>"Carol", ...}, {"id"=>1, "name"=>"Alice", ...}]
 ```
-ActiveRecordLite/
-├── lib/
-│   ├── activerecord_lite.rb          # Main entry point
-│   └── activerecord_lite/
-│       ├── base.rb                   # Base class implementation
-│       ├── relation.rb               # Query building and SQL generation
-│       ├── database_connection.rb    # Database interface
-│       ├── delegation.rb             # Method delegation system
-│       ├── current_scope.rb          # Query state management
-│       └── class_specific_relation.rb # Dynamic method delegation
-├── bin/
-│   └── activerecord_lite.rb          # Executable
-├── Gemfile                           # Dependencies
-└── README.md                         # This file
-```
-
-### Dependencies
-
-- **sqlite3**: SQLite database adapter for Ruby
-- **singleton**: Ruby standard library for singleton pattern
-
-## Limitations
-
-This is an educational implementation with several limitations:
-
-- **In-memory database only**: Data is lost when the process ends
-- **Limited query support**: Only `where` and `order` clauses are implemented
-- **No associations**: No support for relationships between models
-- **No migrations**: No database schema management
-- **Basic SQL generation**: Limited SQL escaping and complex query support
-- **No validations**: No model validation system
-
-## Contributing
-
-This is primarily an educational project, but contributions are welcome:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## Learning Resources
-
-This project demonstrates several important Ruby and ORM concepts:
-
-- **Method delegation**: Using `method_missing` and `respond_to_missing?`
-- **Singleton pattern**: Database connection management
-- **Query building**: Lazy evaluation and method chaining
-- **SQL generation**: Converting Ruby objects to SQL queries
-- **Scope management**: Maintaining state across method calls
-
-For more information about ActiveRecord patterns, see the [Rails ActiveRecord documentation](https://guides.rubyonrails.org/active_record_basics.html).
