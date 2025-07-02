@@ -7,5 +7,5 @@ source "https://rubygems.org"
 gem "sqlite3", "~> 2.7"
 
 group :development, :test do
-  gem 'rspec'
+  gem 'rspec', '~> 3.13.0'
 end
